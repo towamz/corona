@@ -1,5 +1,8 @@
 from tkinter import *
 from tkinter import ttk
+import pandas as pd
+import matplotlib.pyplot as plt
+import japanize_matplotlib
 
 
 def execProc():
@@ -11,9 +14,15 @@ def execProc():
             if chk_bln[currentPref].get():
                 targetPref.append(currentPref)
         
-    print(targetPref)
-    print("終わり")
     
+    #オープンデータ(csv)を読み込み、グラフ表示する
+    df = pd.read_csv("C:\sampleMacro\\2201コロナ\\newly_confirmed_cases_daily.csv", index_col=0)
+    pd.set_option('display.unicode.east_asian_width', True)
+    
+    #グラフ化して表示する
+    df[targetPref].plot()
+    plt.show()
+
 
 
 
