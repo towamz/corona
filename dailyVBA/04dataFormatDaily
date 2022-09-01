@@ -1,0 +1,27 @@
+Sub dataFormatDaily()
+    Dim bolMandatoryField As Boolean
+    
+    bolMandatoryField = True
+    
+    '----必須項目チェック------
+    If Not IsDate(Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DATE_START_RANGE).Value) Then
+        bolMandatoryField = False
+    ElseIf Not IsDate(Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DATE_END_RANGE).Value) Then
+        bolMandatoryField = False
+    ElseIf Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DATE_START_RANGE).Value > Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DATE_END_RANGE).Value Then
+        bolMandatoryField = False
+    ElseIf Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_PREFECTUR_START_RANGE).Value = "" Then
+        bolMandatoryField = False
+'    ElseIf Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_GRAPH_START_RANGE).Value = "" Then
+'        bolMandatoryField = False
+    End If
+
+    If Not bolMandatoryField Then
+        MsgBox "必須項目が入力されていません", vbOKOnly + vbCritical
+        Exit Sub
+    End If
+    
+    Call prefectureFormat
+    Call dateFormat
+
+End Sub

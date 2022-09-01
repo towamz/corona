@@ -1,0 +1,49 @@
+'県名を成形する(不要な県を削除)
+Sub prefectureFormat()
+    Dim cnt As Integer
+    Dim objPrefDict As Dictionary
+    
+    '設定シートの県名を連想配列に読み込む
+    Set objPrefDict = getPrefectureDictionary()
+
+    cnt = INT_DATA_PREFECTURE_START_COLUMN
+
+    Do Until Worksheets(STR_CORONA_DATA_SHEET).Range(STR_DATA_STANDARD_RANGE).Offset(0, cnt).Value = ""
+        
+        If Not objPrefDict.Exists(Worksheets(STR_CORONA_DATA_SHEET).Range(STR_DATA_STANDARD_RANGE).Offset(0, cnt).Value) Then
+            
+            Worksheets(STR_CORONA_DATA_SHEET).Range(STR_DATA_STANDARD_RANGE).Offset(0, cnt).EntireColumn.Delete
+                    
+            '列を削除すると次の列が現在の列番号になるので、cntはカウントアップしない
+        Else
+            
+            cnt = cnt + 1
+        
+        End If
+    
+    Loop
+
+End Sub
+
+
+Function getPrefectureDictionary() As Object
+    Dim myDic As New Dictionary
+    Dim cnt As Integer
+    
+    cnt = 0
+    
+    Worksheets(STR_CONTROL_SHEET).Select
+
+    Do Until Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_PREFECTUR_START_RANGE).Offset(cnt, 0).Value = ""
+    
+        myDic.Add Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_PREFECTUR_START_RANGE).Offset(cnt, 0).Value, 0
+        cnt = cnt + 1
+    
+    Loop
+
+    Set getPrefectureDictionary = myDic
+
+End Function
+
+
+

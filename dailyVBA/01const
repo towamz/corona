@@ -1,0 +1,12 @@
+Global Const STR_CONTROL_SHEET As String = "設定"
+Global Const STR_CORONA_DATA_SHEET As String = "data"
+Global Const STR_CORONA_CHART As String = "グラフ"
+
+Global Const STR_DATA_STANDARD_RANGE As String = "A1"
+Global Const INT_DATA_PREFECTURE_START_COLUMN As Integer = 1
+Global Const INT_DATA_DATE_START_ROW As Integer = 1
+
+Global Const STR_CONTROL_DATE_START_RANGE As String = "B5"
+Global Const STR_CONTROL_DATE_END_RANGE As String = "B6"
+Global Const STR_CONTROL_PREFECTUR_START_RANGE As String = "C5"
+Global Const STR_CONTROL_GRAPH_START_RANGE As String = "D5"

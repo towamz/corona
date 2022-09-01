@@ -1,0 +1,49 @@
+Sub fileOpen()
+
+    Dim strFileName As String 'ファイルフルパス取得
+    Dim objCSVFile As Workbook
+    Dim objMainFile As Workbook
+    
+    strFileName = Application.GetOpenFilename(FileFilter:="CSVファイル(*.csv),*.csv", _
+                                        Title:="コロナ陽性日別を選んでください")
+
+
+    If strFileName = "False" Then
+        Exit Sub
+    End If
+  
+    Set objMainFile = ThisWorkbook
+    
+    'dataシートが存在する場合は削除するか確認する
+    On Error Resume Next
+    objMainFile.Worksheets(STR_CORONA_DATA_SHEET).Select
+    
+    'dataシートが存在する場合は、エラー番号が0になる
+    If Err.Number = 0 Then
+    
+        If MsgBox(STR_CORONA_DATA_SHEET & "シートが存在しています。シートを削除しデータをインポートしますか", vbOKCancel) = vbOK Then
+            
+            Application.DisplayAlerts = False
+            objMainFile.Worksheets(STR_CORONA_DATA_SHEET).Delete
+            Application.DisplayAlerts = True
+            
+        Else
+            Exit Sub
+        End If
+        
+    End If
+    
+    On Error GoTo 0
+    
+    objMainFile.Worksheets.Add After:=Worksheets(STR_CONTROL_SHEET)
+    ActiveSheet.Name = STR_CORONA_DATA_SHEET
+    
+    Set objCSVFile = Workbooks.Open(Filename:=strFileName)
+    ActiveSheet.Cells.Copy ThisWorkbook.Worksheets(STR_CORONA_DATA_SHEET).Cells
+    
+    ActiveWorkbook.Close SaveChanges:=False
+
+End Sub
+
+
+

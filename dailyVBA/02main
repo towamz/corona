@@ -1,0 +1,7 @@
+Sub main()
+    
+    Call fileOpen
+    Call dataFormatDaily
+    Call graphDraw
+
+End Sub

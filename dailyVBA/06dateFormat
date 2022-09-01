@@ -1,0 +1,48 @@
+Sub dateFormat()
+
+    Dim datDateStart As Date
+    Dim datDateEnd As Date
+    Dim rngDateStart As Range
+    Dim rngDateEnd As Range
+    Dim rngDataStart As Range
+    Dim rngDataEnd As Range
+    
+    Dim strAlert As String
+    
+    strAlert = ""   '初期化
+
+    '日付の最初と最後を取得する
+    Set rngDataStart = Worksheets(STR_CORONA_DATA_SHEET).Range(STR_DATA_STANDARD_RANGE).Offset(INT_DATA_DATE_START_ROW, 0)
+    Set rngDataEnd = rngDataStart.End(xlDown)
+    
+    '開始日付の指定がデータの最初であれば、対象データより前のデータ削除を実行しない
+    If rngDataStart.Value <> Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DATE_START_RANGE).Value Then
+        datDateStart = Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DATE_START_RANGE).Value - 1
+        Set rngDateStart = Worksheets(STR_CORONA_DATA_SHEET).Range(STR_DATA_STANDARD_RANGE).EntireColumn.Find(What:=datDateStart)
+        
+        If rngDateStart Is Nothing Then
+            strAlert = strAlert & "開始日に指定された日付が見つかりません。" & vbCrLf
+        Else
+            Range(rngDataStart, rngDateStart).EntireRow.Delete
+        End If
+    End If
+    
+    '終了日付の指定がデータの最後であれば、対象データより前のデータ削除を実行しない
+    If rngDataEnd.Value <> Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DATE_END_RANGE).Value Then
+        datDateEnd = Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DATE_END_RANGE).Value + 1
+        Set rngDateEnd = Worksheets(STR_CORONA_DATA_SHEET).Range(STR_DATA_STANDARD_RANGE).EntireColumn.Find(What:=datDateEnd)
+            
+        If rngDateEnd Is Nothing Then
+            strAlert = strAlert & "終了日に指定された日付が見つかりません。" & vbCrLf
+        Else
+            Range(rngDateEnd, rngDataEnd).EntireRow.Delete
+        End If
+            
+    End If
+    
+    '開始終了日がデータの範囲にないときは、警告を表示する
+    If Len(strAlert) <> 0 Then
+        MsgBox strAlert, vbOKOnly + vbExclamation
+    End If
+    
+End Sub
