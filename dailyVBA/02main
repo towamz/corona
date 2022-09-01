@@ -1,7 +1,11 @@
 Sub main()
     
-    Call fileOpen
-    Call dataFormatDaily
+    Call dataCopy
+    If mandatoryFieldCheck = False Then
+        Exit Sub
+    End If    
+    Call prefectureFormat
+    Call dateFormat
     Call graphDraw
 
 End Sub

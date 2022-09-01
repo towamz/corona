@@ -1,4 +1,4 @@
-Sub dataFormatDaily()
+Function  mandatoryFieldCheck() As Boolean
     Dim bolMandatoryField As Boolean
     
     bolMandatoryField = True
@@ -18,10 +18,10 @@ Sub dataFormatDaily()
 
     If Not bolMandatoryField Then
         MsgBox "必須項目が入力されていません", vbOKOnly + vbCritical
+        mandatoryFieldCheck = False
         Exit Sub
     End If
     
-    Call prefectureFormat
-    Call dateFormat
+	mandatoryFieldCheck = True
 
 End Sub
