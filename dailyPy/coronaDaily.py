@@ -1,25 +1,18 @@
 from tkinter import *
 from tkinter import ttk
-import tkinter
 
 
 def execProc():
     targetPref = []
     
-    regionCnt=-1
-    
-    for i in chk_txt:
-        regionCnt += 1
-        cnt=-1
-        for j in i:
-            cnt += 1
+    for regionList in chk_txt:
+        for currentPref in regionList:
+            
+            if chk_bln[currentPref].get():
+                targetPref.append(currentPref)
         
-            #print(chk_txt[regionCnt][cnt],chk_bln[chk_txt[regionCnt][cnt]].get())
-            if chk_bln[chk_txt[regionCnt][cnt]].get():
-                targetPref.append(chk_txt[regionCnt][cnt])
-    
     print(targetPref)
-    #print("終わり")
+    print("終わり")
     
 
 
@@ -55,26 +48,18 @@ chk_bln = {}
 
 
 # チェックボタンを動的に作成して配置
-regionCnt=0
-cnt = 0
+for regionCnt, regionList in enumerate(chk_txt):
+    for cnt, currentPref in enumerate(regionList):
 
-for i in chk_txt:
-    regionCnt += 1
-    cnt=0
-    for j in i:
-        cnt += 1
-       
-        print(j[0])
-
-        chk_bln[j] = BooleanVar()
+        chk_bln[currentPref] = BooleanVar()
         
-        chk = Checkbutton(frame1, variable=chk_bln[j], text=j, onvalue=True, offvalue=False) 
+        chk = Checkbutton(frame1, variable=chk_bln[currentPref], text=currentPref, onvalue=True, offvalue=False) 
         chk.grid(row=regionCnt, column=cnt, sticky=W)
 
 
 
 # グラフ化実行ボタン
-button1 = tkinter.Button(frame1, text='グラフ化', command=execProc)
+button1 = ttk.Button(frame1, text='グラフ化', command=execProc)
 button1.grid(row=10, column=0, columnspan=3)
 
 Label(root, text ='表示する都道府県を選択してください').place(x = 0, y = 0)
