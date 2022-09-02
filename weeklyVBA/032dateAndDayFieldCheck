@@ -1,0 +1,59 @@
+
+Sub dateAndDayFieldCheck()
+    Dim rngDateStart As Range
+    Dim rngDateEnd As Range
+    Dim rngDay As Range
+    Dim intEndDay As Integer
+
+
+    Set rngDateStart = Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DATE_START_RANGE)
+    Set rngDateEnd = Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DATE_END_RANGE)
+    Set rngDay = Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DAYofWEEK_START_RANGE)
+    
+    'デバッグ用
+    'Debug.Print Weekday(rngDateStart.Value, rngDay.Value)
+    'Debug.Print rngDateStart.Value - Weekday(rngDateStart.Value, rngDay.Value) + 1
+    'Debug.Print rngDateStart.Value + 8 - Weekday(rngDateStart.Value, rngDay.Value)
+    
+    If Weekday(rngDateStart.Value, rngDay.Value) <> 1 Then
+        Select Case MsgBox("開始日に指定された日付が基準週ではありません。どれか選んでください。" & vbCrLf & _
+                           "開始日を変更:" & Format(rngDateStart.Value - Weekday(rngDateStart.Value, rngDay.Value) + 1, "yyyy/mm/dd(aaa)") & "-->(はい)" & vbCrLf & _
+                           "開始日を変更:" & Format(rngDateStart.Value + 8 - Weekday(rngDateStart.Value, rngDay.Value), "yyyy/mm/dd(aaa)") & "-->(いいえ)" & vbCrLf & _
+                           "基準週を変更:" & Format(rngDateStart, "(aaa)") & "-->(キャンセル)", vbYesNoCancel)
+    
+            Case vbYes
+                rngDateStart.Value = rngDateStart.Value - Weekday(rngDateStart.Value, rngDay.Value) + 1
+            
+            Case vbNo
+                rngDateStart.Value = rngDateStart.Value + 8 - Weekday(rngDateStart.Value, rngDay.Value)
+            
+            Case vbCancel
+                rngDay = Weekday(rngDateStart.Value, vbSunday)
+    
+        End Select
+        
+    End If
+    
+    
+    '終了曜日は開始曜日の6日先(例:開始曜日が日曜日であれば、終了曜日は土曜日)
+    intEndDay = (rngDay.Value + 6) Mod 7
+    If intEndDay = 0 Then
+        intEndDay = 7
+    End If
+    
+    If Weekday(rngDateEnd.Value, intEndDay) <> 1 Then
+        Select Case MsgBox("終了日に指定された日付が基準週末ではありません。どれか選んでください。" & vbCrLf & _
+                           "終了日を変更:" & Format(rngDateEnd.Value - Weekday(rngDateEnd.Value, intEndDay) + 1, "yyyy/mm/dd(aaa)") & "-->(はい)" & vbCrLf & _
+                           "終了日を変更:" & Format(rngDateEnd.Value + 8 - Weekday(rngDateEnd.Value, intEndDay), "yyyy/mm/dd(aaa)") & "-->(いいえ)", vbYesNo)
+    
+            Case vbYes
+                rngDateEnd.Value = rngDateEnd.Value - Weekday(rngDateEnd.Value, intEndDay) + 1
+            
+            Case vbNo
+                rngDateEnd.Value = rngDateEnd.Value + 8 - Weekday(rngDateEnd.Value, intEndDay)
+            
+    
+        End Select
+    End If
+
+End Sub

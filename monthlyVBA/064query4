@@ -1,0 +1,24 @@
+Sub query4()
+    Dim accApp As Object
+    Dim strDBFileName As String
+    Dim strSql As String
+    
+    'カレントディレクトリのデータベースパスを取得
+    strDBFileName = ActiveWorkbook.Path & "\" & STR_DBFILENAME
+    
+    'Accessの参照を設定する
+    Set accApp = CreateObject("Access.Application")
+    
+    'Accessファイルを開く
+    accApp.OpenCurrentDatabase strDBFileName
+    
+    'AccessのテーブルからCSVファイルにエクスポートする
+    accApp.DoCmd.TransferText acExportDelim, , STR_QUERYNAME, STR_CSVFileName, True, , 65001
+    
+    'データベースを閉じる
+    accApp.CloseCurrentDatabase
+    
+    '後処理
+    Set accApp = Nothing
+
+End Sub

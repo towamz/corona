@@ -1,0 +1,50 @@
+Function csvImport() As Boolean
+
+    Dim strFileName As String 'ファイルフルパス取得
+    Dim objCSVFile As Workbook
+    Dim objMainFile As Workbook
+    
+    Set objMainFile = ThisWorkbook
+    
+    'dataシートが存在する場合は削除するか確認する
+    On Error Resume Next
+    objMainFile.Worksheets(STR_CORONA_DATA_SHEET).Select
+    
+    'dataシートが存在する場合は、エラー番号が0になる
+    If Err.Number = 0 Then
+    
+        If MsgBox(STR_CORONA_DATA_SHEET & "シートが存在しています。シートを削除しデータをインポートしますか", vbOKCancel) = vbOK Then
+            
+            Application.DisplayAlerts = False
+            objMainFile.Worksheets(STR_CORONA_DATA_SHEET).Delete
+            Application.DisplayAlerts = True
+            
+        Else
+            csvImport = False
+            Exit Function
+        End If
+        
+    End If
+    
+    On Error GoTo 0
+    
+    '成形済みCSVをインポートするシートを追加する
+    objMainFile.Worksheets.Add After:=Worksheets(STR_CONTROL_SHEET)
+    ActiveSheet.Name = STR_CORONA_DATA_SHEET
+    
+    'CSVファイルを開き、追加したシートにコピーする
+    Set objCSVFile = Workbooks.Open(Filename:=STR_CSVFileName)
+    objCSVFile.ActiveSheet.Cells.Copy objMainFile.Worksheets(STR_CORONA_DATA_SHEET).Cells
+    
+    'CSVファイルを閉じる
+    objCSVFile.Close SaveChanges:=False
+    
+    'accessで処理したデータを取り込んだので、作業用ファイルを削除する
+    Kill ThisWorkbook.Path & "\" & STR_DBFILENAME
+    Kill STR_CSVFileName
+    
+    csvImport = True
+    
+End Function
+
+

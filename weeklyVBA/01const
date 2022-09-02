@@ -1,0 +1,23 @@
+Global Const STR_CONTROL_SHEET As String = "設定"
+Global Const STR_CORONA_DATA_SHEET As String = "data"
+Global Const STR_CORONA_CHART As String = "グラフ"
+
+Global Const STR_DATA_STANDARD_RANGE As String = "A1"
+Global Const INT_DATA_PREFECTURE_START_COLUMN As Integer = 1
+Global Const INT_DATA_DATE_START_ROW As Integer = 1
+
+Global Const STR_CONTROL_DATE_START_RANGE As String = "B5"
+Global Const STR_CONTROL_DATE_END_RANGE As String = "B6"
+Global Const STR_CONTROL_PREFECTUR_START_RANGE As String = "C5"
+Global Const STR_CONTROL_GRAPH_START_RANGE As String = "D5"
+Global Const STR_CONTROL_DAYofWEEK_START_RANGE As String = "A5"
+Global Const STR_CONTROL_PREFECTUR_LIST_START_RANGE As String = "F6"
+
+Global Const STR_DBFILENAME As String = "corona.accdb"
+Global Const STR_TABLENAME As String = "cases_daily"
+Global Const STR_TABLENAME_WEEKLY As String = "cases_weekly"
+Global Const STR_QUERYNAME As String = "q_cases_weekly"
+Global Const STR_FIELDNAME_SUFFIX As String = "dm"   '読み込みフィールド名に付加する(循環参照を回避するため)「クエリ定義のSELECTで指定されている別名''が循環参照を発生させています」
+Global Const STR_FIELDNAME_SUFFIX2 As String = "dm2"   '読み込みフィールド名に付加する(循環参照を回避するため)「クエリ定義のSELECTで指定されている別名''が循環参照を発生させています」
+
+Global STR_CSVFileName As String    'csvファイル(作業用)の名前を格納

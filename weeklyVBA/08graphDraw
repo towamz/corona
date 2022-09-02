@@ -1,0 +1,21 @@
+Sub graphDraw()
+    Dim rngRightDown As Range
+    Dim objChart As Chart
+    
+    'グラフがすでにある場合は削除する
+    On Error Resume Next
+    Application.DisplayAlerts = False
+    Charts(STR_CORONA_CHART).Delete
+    Application.DisplayAlerts = True
+    
+    Set rngRightDown = Worksheets(STR_CORONA_DATA_SHEET).Range(STR_DATA_STANDARD_RANGE).End(xlDown).End(xlToRight)
+    
+    'グラフシート挿入
+    Set objChart = Charts.Add
+    
+    objChart.Move After:=Worksheets(STR_CORONA_DATA_SHEET)
+    objChart.Name = STR_CORONA_CHART
+    objChart.SetSourceData Source:=Range(Worksheets(STR_CORONA_DATA_SHEET).Range(STR_DATA_STANDARD_RANGE), rngRightDown)
+    objChart.ChartType = Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_GRAPH_START_RANGE).Value
+    
+End Sub

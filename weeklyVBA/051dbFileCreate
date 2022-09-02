@@ -1,0 +1,39 @@
+Function dbFileCreate() As Boolean
+
+    Dim adoxCAT As Object
+    
+    Set adoxCAT = CreateObject("ADOX.Catalog")
+    
+    On Error GoTo errLabel
+    '作業用Accessファイルを生成する
+    adoxCAT.Create "Provider=Microsoft.Ace.OLEDB.12.0;Data Source=" & ThisWorkbook.Path & "\" & STR_DBFILENAME
+
+    '後処理
+    Set adoxCAT = Nothing
+
+    dbFileCreate = True
+    Exit Function
+    
+errLabel:
+    'Accessファイルが存在するとき
+    If Err.Number = -2147217897 Then
+        Select Case MsgBox(STR_DBFILENAME & "が存在します。" & vbCrLf & "ok=処理継続する。(ファイルは削除されます)" & vbCrLf & "キャンセル=処理を中止。", vbOKCancel)
+            Case vbOK
+                '既存のファイルを削除し、resume(Accessファイル)する
+                Kill ThisWorkbook.Path & "\" & STR_DBFILENAME
+                Resume
+            Case vbCancel
+                '何も処理せずに関数を抜ける。処理は中断するのでFalseを返す
+                dbFileCreate = False
+                Exit Function
+        End Select
+    End If
+    
+    
+    Debug.Print Err.Number
+    Debug.Print Err.Description
+    
+    Stop
+
+
+End Function

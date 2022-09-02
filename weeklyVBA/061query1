@@ -1,0 +1,141 @@
+Option Explicit
+
+Sub query1()
+    Dim strDBFileName As String
+    Dim strSql As String
+
+    Dim prefString1 As String
+    Dim prefString2 As String
+    
+    Dim queryString1 As String
+    Dim queryString2 As String
+    Dim queryString3 As String
+    Dim queryString4 As String
+    Dim queryString5 As String
+
+    
+    Dim datStart As Date
+    Dim datEnd As Date
+    Dim datCurrentStart As Date
+    Dim datCurrentEnd As Date
+    
+    Dim intDayofWeek As Integer
+    Dim datcnt As Integer
+
+
+    '------------DB接続-------------------------
+'    'カレントディレトリのデータベースパスを取得
+    strDBFileName = ThisWorkbook.Path & "\" & STR_DBFILENAME
+
+    'データベースを開く
+    Dim cn As ADODB.Connection
+    Set cn = New ADODB.Connection
+    cn.Open _
+    "Provider=Microsoft.ACE.OLEDB.16.0;" & _
+    "Data Source=" & strDBFileName & ";"
+    '------------DB接続終わり-------------------------
+
+
+    '------------SQL生成・実行-------------------------
+    '県別部分を生成(*だとエラーになるため、すべてのカラム名を連結)
+    prefString1 = getPrefectureString
+    prefString2 = getPrefectureString2
+    
+    
+    'クエリの固定値部分をループ外で作成
+    queryString1 = "INSERT INTO " & STR_TABLENAME_WEEKLY & " SELECT '"
+    'stringStartDate = "2022/1/15"
+    queryString2 = "' AS dt" & STR_FIELDNAME_SUFFIX & ", SUM(zenken" & STR_FIELDNAME_SUFFIX2 & ") AS zenken" & STR_FIELDNAME_SUFFIX & "," & prefString1 & " FROM " & " ("
+    queryString3 = " SELECT zenken" & STR_FIELDNAME_SUFFIX & " AS zenken" & STR_FIELDNAME_SUFFIX2 & "," & prefString2 & " FROM " & STR_TABLENAME & " WHERE dt" & STR_FIELDNAME_SUFFIX & " BETWEEN #"
+    'stringStartDate = "2022/1/15"
+    queryString4 = "# AND #"
+    'stringEndDate = "2022/1/21"
+    queryString5 = "#);"
+
+
+    datStart = Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DATE_START_RANGE).Value
+    datEnd = Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DATE_END_RANGE).Value
+    datCurrentStart = datStart
+    datCurrentEnd = datEnd
+    
+    'SQL実行(日付部分を変えて実行)
+    For datcnt = 0 To datEnd - datStart Step 7
+            
+        datCurrentStart = datStart + datcnt
+        datCurrentEnd = datStart + datcnt + 6
+    
+        'sql分作成
+        strSql = queryString1 & Format(datCurrentStart, "yyyy/mm/dd") & queryString2 & queryString3 & Format(datCurrentStart, "yyyy/mm/dd") & queryString4 & Format(datCurrentEnd, "yyyy/mm/dd") & queryString5
+        Debug.Print strSql
+    
+        cn.Execute strSql
+    
+    Next
+    
+    '------------SQL生成・実行終わり-------------------------
+
+    
+    
+    '------------DB切断-------------------------
+    cn.Close
+    Set cn = Nothing
+    '------------DB終わり-------------------------
+
+
+End Sub
+
+
+
+'SQL文の県名部分を生成する
+Function getPrefectureString() As String
+    Dim strPrefCon As String
+    Dim strCurrentPref As String
+    Dim cnt As Integer
+    
+    'SQLを生成する
+    cnt = 0
+    
+    Worksheets(STR_CONTROL_SHEET).Select
+
+    Do Until Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_PREFECTUR_LIST_START_RANGE).Offset(cnt, 0).Value = ""
+        
+        strCurrentPref = Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_PREFECTUR_LIST_START_RANGE).Offset(cnt, 0).Value
+        
+        Select Case strCurrentPref
+            Case "ALL"
+                strCurrentPref = "zenken"
+        End Select
+        
+
+        strPrefCon = strPrefCon & "SUM(" & strCurrentPref & STR_FIELDNAME_SUFFIX2 & ") AS " & strCurrentPref & STR_FIELDNAME_SUFFIX & ","
+        
+        cnt = cnt + 1
+    Loop
+
+    getPrefectureString = Left(strPrefCon, Len(strPrefCon) - 1)
+
+End Function
+
+
+Function getPrefectureString2() As String
+    Dim strPrefCon As String
+    Dim strCurrentPref As String
+    Dim cnt As Integer
+    
+    cnt = 0
+    
+    Worksheets(STR_CONTROL_SHEET).Select
+
+    Do Until Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_PREFECTUR_LIST_START_RANGE).Offset(cnt, 0).Value = ""
+        
+        strCurrentPref = Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_PREFECTUR_LIST_START_RANGE).Offset(cnt, 0).Value
+        
+        'SUM(Hokkaidodm) AS Hokkaidodm2 ,SUM(Aomoridm)
+        strPrefCon = strPrefCon & " " & strCurrentPref & STR_FIELDNAME_SUFFIX & " AS " & strCurrentPref & STR_FIELDNAME_SUFFIX2 & ","
+        
+        cnt = cnt + 1
+    Loop
+
+    getPrefectureString2 = Left(strPrefCon, Len(strPrefCon) - 1)
+
+End Function

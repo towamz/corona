@@ -1,0 +1,35 @@
+Sub main()
+    Dim alertStr As String
+
+    alertStr = mandatoryFieldCheck
+    If Len(alertStr) > 0 Then
+        MsgBox alertStr, vbOKOnly + vbCritical
+        Exit Sub
+    End If
+    
+    '日付調整
+    Call dateAndDayFieldCheck
+    
+    
+    If csvFieldNameModify = False Then
+        Exit Sub
+    End If
+
+    If dbFileCreate = False Then
+        Exit Sub
+    End If
+    
+    If dbTableCreate = False Then
+        Exit Sub
+    End If
+    
+    Call queryExec
+
+    If csvImport = False Then
+        Exit Sub
+    End If
+
+    Call graphDraw
+
+
+End Sub

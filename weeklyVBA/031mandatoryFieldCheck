@@ -1,0 +1,62 @@
+'----必須項目チェック------
+Function mandatoryFieldCheck() As String
+    Dim isDateStart As Boolean
+    Dim isDateEnd As Boolean
+    
+    
+    '基準週
+    If Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DAYofWEEK_START_RANGE).Value = "" Then
+        mandatoryFieldCheck = mandatoryFieldCheck & "基準週が指定されていません" & vbCrLf
+    ElseIf Not IsNumeric(Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DAYofWEEK_START_RANGE).Value) Then
+        mandatoryFieldCheck = mandatoryFieldCheck & "基準週の指定が間違っています" & vbCrLf
+    ElseIf Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DAYofWEEK_START_RANGE).Value < 1 Or 7 < Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DAYofWEEK_START_RANGE).Value Then
+        mandatoryFieldCheck = mandatoryFieldCheck & "基準週の指定が間違っています" & vbCrLf
+    End If
+
+
+
+
+    '開始年月日
+    isDateStart = False
+    If Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DATE_START_RANGE).Value = "" Then
+        mandatoryFieldCheck = mandatoryFieldCheck & "開始年月日が指定されていません" & vbCrLf
+        isDateStart = True
+    ElseIf Not IsDate(Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DATE_START_RANGE).Value) Then
+        mandatoryFieldCheck = mandatoryFieldCheck & "開始年月日の指定が間違っています" & vbCrLf
+        isDateStart = True
+    End If
+
+    '終了年月日
+    isDateEnd = False
+    If Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DATE_END_RANGE).Value = "" Then
+        mandatoryFieldCheck = mandatoryFieldCheck & "終了年月日が指定されていません" & vbCrLf
+        isDateEnd = True
+    ElseIf Not IsDate(Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DATE_END_RANGE).Value) Then
+        mandatoryFieldCheck = mandatoryFieldCheck & "終了年月日の指定が間違っています" & vbCrLf
+        isDateEnd = True
+    End If
+    
+    '開始年月日・終了年月日
+    If Not (isDateStart Or isDateEnd) Then
+        If Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DATE_START_RANGE).Value > Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DATE_END_RANGE).Value Then
+            mandatoryFieldCheck = mandatoryFieldCheck & "開始年月日と終了年月日の指定が逆になっています" & vbCrLf
+        ElseIf Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DATE_START_RANGE).Value + 6 > Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DATE_END_RANGE).Value Then
+            mandatoryFieldCheck = mandatoryFieldCheck & "終了年月日は開始年月日より6日以上開ける必要があります" & vbCrLf
+        End If
+    End If
+        
+        
+        
+        
+    '都道府県
+    If Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_PREFECTUR_START_RANGE).Value = "" Then
+        mandatoryFieldCheck = mandatoryFieldCheck & "県名が指定されていません" & vbCrLf
+    End If
+    
+    'グラフ
+    If Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_GRAPH_START_RANGE).Value = "" Then
+        mandatoryFieldCheck = mandatoryFieldCheck & "グラフが指定されていません" & vbCrLf
+    End If
+
+    
+End Function

@@ -1,0 +1,41 @@
+'csvファイルを読み込みテーブルを作成する
+'週次データ保存用にテーブルをコピーし、データを削除する
+
+Function dbTableCreate() As Boolean
+
+    Dim accApp As Object
+    Dim strDBFileName As String
+    Dim strSql As String
+    
+    'カレントディレトリのデータベースパスを取得
+    strDBFileName = ThisWorkbook.Path & "\" & STR_DBFILENAME
+    
+    'Accessファイルを開く
+    On Error GoTo errLabel
+    Set accApp = CreateObject("Access.Application")
+    
+    accApp.OpenCurrentDatabase strDBFileName
+    
+    'CSVファイルのデータをAccessのテーブルにインポートする
+    
+    accApp.DoCmd.TransferText acImportDelim, , STR_TABLENAME, STR_CSVFileName, True, , 65001
+    '週次集計用テーブルに日別テーブルをコピーする(データはすぐに削除)
+    accApp.DoCmd.CopyObject , STR_TABLENAME_WEEKLY, acTable, STR_TABLENAME
+    CurrentDb.Execute "DELETE FROM " & STR_TABLENAME_WEEKLY
+    
+    'データベースを閉じる
+    accApp.CloseCurrentDatabase
+    
+    '後処理
+    Set accApp = Nothing
+
+    dbTableCreate = True
+    Exit Function
+
+errLabel:
+
+    dbTableCreate = False
+
+
+End Function
+

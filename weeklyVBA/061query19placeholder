@@ -1,0 +1,63 @@
+'プレースホルダではエラーになってしまう
+
+Sub query1placeholder()
+    Dim strDBFileName As String
+    Dim strSql As String
+    
+    'カレントディレトリのデータベースパスを取得
+    strDBFileName = ThisWorkbook.Path & "\" & STR_DBFILENAME
+    
+    
+    '接続
+    Dim cn As Object 'ADOコネクション用オブジェクト
+    Set cn = CreateObject("ADODB.Connection")
+    cn.Open "Provider=Microsoft.ACE.OLEDB.12.0;" & _
+              "Data Source=" & strDBFileName 'Accessファイルを指定してコネクションを開く
+      
+    'ADOコマンドオブジェクトの設定
+    Dim cmd As Object
+    Set cmd = CreateObject("ADODB.Command")
+    cmd.ActiveConnection = cn
+
+'--------------------------------------------------------------------------------------------------------------------
+    Dim datStart As Date
+    Dim datEnd As Date
+    Dim prefString1 As String
+    Dim prefString2 As String
+    Dim datcnt As Integer
+        
+    datStart = Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DATE_START_RANGE).Value
+    datEnd = Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_DATE_END_RANGE).Value
+    
+    prefString1 = getPrefectureString
+    prefString2 = getPrefectureString2
+   
+
+        
+   
+    For datcnt = 0 To datEnd - datStart Step 7
+                strSql = "INSERT INTO " & STR_TABLENAME_WEEKLY & _
+                " SELECT '?' AS dt" & STR_FIELDNAME_SUFFIX & ", SUM(zenken" & STR_FIELDNAME_SUFFIX2 & ") AS zenken" & STR_FIELDNAME_SUFFIX & "," & prefString1 & _
+                " FROM " & _
+                " (" & _
+                " SELECT zenken" & STR_FIELDNAME_SUFFIX & " AS zenken" & STR_FIELDNAME_SUFFIX2 & "," & prefString2 & " FROM " & STR_TABLENAME & _
+                " WHERE dt" & STR_FIELDNAME_SUFFIX & " BETWEEN ? AND ?" & _
+                ");"
+        Debug.Print strSql
+        
+        cmd.CommandText = strSql
+        'cmd.Execute Parameters:=Array(Format(datStart + datcnt, "yyyy/mm/dd"), "#" & Format(datStart + datcnt, "yyyy/mm/dd") & "#", "#" & Format(datStart + datcnt + 6, "#yyyy/mm/dd#") & "#")
+        cmd.Execute Parameters:=Array("2022/8/1", "#2022/8/1#", "#2022/8/10#")
+    
+    Next
+'-------------------------------------
+    
+  'コマンドオブジェクトの後処理
+  Set cmd = Nothing
+  
+  '接続解除
+  cn.Close
+  Set cn = Nothing
+
+
+End Sub

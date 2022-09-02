@@ -1,0 +1,31 @@
+Option Compare Database
+
+Sub transformatData()
+    Dim rs1 As Recordset
+    Dim i As Long
+    Dim SQL As String
+    
+    Set rs1 = CurrentDb.OpenRecordset("Newly_confirmed_cases_daily", dbOpenTable)
+
+    'フィールド名を取得する
+    For i = 0 To rs1.Fields.Count - 1
+        SQL = ""    '初期化
+        Select Case rs1.Fields(i).Name
+            '県名以外のフィールド名は処理対象外とする
+            Case "ID"
+            Case "Dt"
+            Case "All"
+            Case Else
+                'SQL文を生成する
+                SQL = SQL & "INSERT INTO fmtDB (dt, pref, case)" & vbCrLf
+                SQL = SQL & "SELECT dt, '" & rs1.Fields(i).Name & "' AS pref, " & rs1.Fields(i).Name & vbCrLf
+                SQL = SQL & "FROM Newly_confirmed_cases_daily;"
+            
+                'SQLを実行する
+                CurrentDb.Execute SQL
+        End Select
+    Next
+    
+    Set rs1 = Nothing
+
+End Sub

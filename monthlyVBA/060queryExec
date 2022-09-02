@@ -1,0 +1,8 @@
+Sub queryExec()
+
+    'Call query1    '作業用Accessファイルは実行の都度生成・削除するのでDropTableを実行する必要がない
+    Call query2
+    Call query3
+    Call query4
+    
+End Sub

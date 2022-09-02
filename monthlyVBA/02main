@@ -1,0 +1,24 @@
+Sub main()
+
+    If mandatoryFieldCheck = False Then
+        MsgBox "必須項目が入力されていません", vbOKOnly + vbCritical
+        Exit Sub
+    End If
+    
+    If csvFieldNameModify = False Then
+        Exit Sub
+    End If
+
+    If dbFileCreate = False Then
+        Exit Sub
+    End If
+    
+    Call queryExec
+
+    If csvImport = False Then
+        Exit Sub
+    End If
+
+    Call graphDraw
+
+End Sub

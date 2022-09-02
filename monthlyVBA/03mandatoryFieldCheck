@@ -1,0 +1,12 @@
+Function mandatoryFieldCheck() As Boolean
+    
+    mandatoryFieldCheck = True
+    
+    '----必須項目チェック------
+    If Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_PREFECTUR_START_RANGE).Value = "" Then
+        mandatoryFieldCheck = False
+    ElseIf Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_GRAPH_START_RANGE).Value = "" Then
+        mandatoryFieldCheck = False
+    End If
+    
+End Function

@@ -1,0 +1,42 @@
+Sub query1()
+    Dim adoCON As New ADODB.Connection
+    Dim strSql As String
+    
+    'Microsoft Accessへの接続情報を取得する
+    adoCON.ConnectionString = "provider=Microsoft.ACE.OLEDB.12.0;" _
+                            & "Data Source=" _
+                            & ActiveWorkbook.Path & "\" & STR_DBFILENAME & ""
+                            
+    'Accessに接続する
+    adoCON.Open
+    
+    'CSVファイルをインポートするテーブルを削除する
+    strSql = "DROP TABLE " & STR_TABLENAME
+    'テーブルが存在しない場合はエラーが発生するので、処理を継続する
+    On Error GoTo errLabel
+    adoCON.Execute strSql
+
+    'Accessを閉じる
+    adoCON.Close
+    '後処理
+    Set adoCON = Nothing
+
+    Exit Sub
+errLabel:
+    'テーブルが存在しないとき
+    If Err.Number = -2147217865 Then
+        Resume Next
+    End If
+
+    'テーブルが存在しないエラー以外は停止する
+    Debug.Print Err.Number
+    Debug.Print Err.Description
+    
+    Stop
+    
+    Resume
+
+End Sub
+
+
+

@@ -1,0 +1,7 @@
+Sub queryExec()
+
+    Call query1
+    Call query2
+    Call query3
+    
+End Sub

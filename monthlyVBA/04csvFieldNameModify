@@ -1,0 +1,46 @@
+Function csvFieldNameModify() As Boolean
+
+    Dim objCSVFile As Workbook
+    Dim strOriginalCSVFileName As String 'ファイルフルパス取得
+    Dim strCSVFileNameNoExt As String   '拡張子を除いたファイル名
+    Dim cnt As Long
+
+    strOriginalCSVFileName = Application.GetOpenFilename(FileFilter:="CSVファイル(*.csv),*.csv", _
+                                        Title:="コロナ陽性日別を選んでください")
+
+    If strOriginalCSVFileName = "False" Then
+        csvFieldNameModify = False
+        Exit Function
+    End If
+        
+    Set objCSVFile = Workbooks.Open(Filename:=strOriginalCSVFileName)
+    
+    '拡張子を除いたファイル名(=シート名)を取得する
+    strCSVFileNameNoExt = Left(objCSVFile.Name, InStrRev(objCSVFile.Name, ".") - 1)
+    
+    '----------フィールド名変更を実施(循環参照回避のため、各フィールドの末尾にSUFFIXを付ける)-------------------
+    'Date->dtにフィールド名変更(dateがSQLの予約語のため)
+    objCSVFile.Worksheets(strCSVFileNameNoExt).Range(STR_DATA_STANDARD_RANGE).Value = "dt" & STR_FIELDNAME_SUFFIX
+    'All->zenkenにフィールド名変更(AllがSQLの予約語のため)
+    objCSVFile.Worksheets(strCSVFileNameNoExt).Range(STR_DATA_STANDARD_RANGE).Offset(0, 1).Value = "zenken" & STR_FIELDNAME_SUFFIX
+    
+    cnt = 2
+    
+    Do Until objCSVFile.Worksheets(strCSVFileNameNoExt).Range(STR_DATA_STANDARD_RANGE).Offset(0, cnt).Value = ""
+    
+        objCSVFile.Worksheets(strCSVFileNameNoExt).Range(STR_DATA_STANDARD_RANGE).Offset(0, cnt).Value = _
+        objCSVFile.Worksheets(strCSVFileNameNoExt).Range(STR_DATA_STANDARD_RANGE).Offset(0, cnt).Value & STR_FIELDNAME_SUFFIX
+    
+        cnt = cnt + 1
+    Loop
+    '----------フィールド名変更を実施・終わり-------------------
+    
+    
+    '作業用ファイル名をグローバル変数に格納する
+    STR_CSVFileName = objCSVFile.Path & "\" & strCSVFileNameNoExt & "tmp.csv"
+    
+    objCSVFile.SaveAs STR_CSVFileName   '作業用ファイルとして別名保存する
+    objCSVFile.Close False      'オリジナルファイルは保存しないで閉じる
+    csvFieldNameModify = True
+
+End Function

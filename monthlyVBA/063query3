@@ -1,0 +1,62 @@
+Sub query3()
+    Dim Qdf As DAO.QueryDef
+    Dim objDB As Database
+    Dim strSql As String
+    
+    'データベースを開く
+    Set objDB = OpenDatabase(ActiveWorkbook.Path & "\" & STR_DBFILENAME)
+    
+    'SQLを生成する
+    strSql = "SELECT format(dt" & STR_FIELDNAME_SUFFIX & ",'yyyy/mm') AS dt," & getPrefectureString & " FROM " & STR_TABLENAME & " GROUP BY format(dt" & STR_FIELDNAME_SUFFIX & ",'yyyy/mm')"
+    
+    'クエリ(ビュー)を作成する
+    On Error GoTo errLabel
+    Set Qdf = objDB.CreateQueryDef(STR_QUERYNAME, strSql)
+    
+    'データベースを閉じる
+    objDB.Close
+    
+    '後処理
+    Set Qdf = Nothing
+    Set objDB = Nothing
+
+    Exit Sub
+
+errLabel:
+    'クエリが存在するとき
+    If Err.Number = 3012 Then
+        '既存のクエリを削除し、作成を実行する
+        objDB.QueryDefs.Delete STR_QUERYNAME
+        Resume
+    End If
+    
+    Debug.Print Err.Description
+    Debug.Print Err.Number
+
+    Stop
+
+End Sub
+
+
+'SQL文の県名部分を生成する
+Function getPrefectureString() As String
+    Dim strPrefCon As String
+    Dim strCurrentPref As String
+    Dim cnt As Integer
+    
+    cnt = 0
+    
+    Worksheets(STR_CONTROL_SHEET).Select
+
+    Do Until Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_PREFECTUR_START_RANGE).Offset(cnt, 0).Value = ""
+        
+        strCurrentPref = Worksheets(STR_CONTROL_SHEET).Range(STR_CONTROL_PREFECTUR_START_RANGE).Offset(cnt, 0).Value
+        
+        strPrefCon = strPrefCon & "sum(" & strCurrentPref & STR_FIELDNAME_SUFFIX & ") As " & strCurrentPref & ","
+        
+        cnt = cnt + 1
+    Loop
+
+    getPrefectureString = Left(strPrefCon, Len(strPrefCon) - 1)
+
+End Function
